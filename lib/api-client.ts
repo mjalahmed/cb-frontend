@@ -10,6 +10,27 @@ import type {
 
 // Auth
 export const authApi = {
+  register: async (userData: {
+    username: string;
+    email?: string;
+    password: string;
+    phoneNumber: string;
+  }) => {
+    const { data } = await api.post<{
+      success: boolean;
+      message: string;
+      user: User;
+    }>('/auth/register', userData);
+    return data;
+  },
+  login: async (username: string, password: string) => {
+    const { data } = await api.post<{
+      success: boolean;
+      token: string;
+      user: User;
+    }>('/auth/login', { username, password });
+    return data;
+  },
   sendOTP: async (phoneNumber: string) => {
     const { data } = await api.post<{ success: boolean; message?: string }>(
       '/auth/send-otp',
@@ -17,11 +38,12 @@ export const authApi = {
     );
     return data;
   },
-  verifyOTP: async (phoneNumber: string, otp: string) => {
-    const { data } = await api.post<{ success: boolean; token: string; user: User }>(
-      '/auth/verify-otp',
-      { phoneNumber, otp }
-    );
+  verifyPhone: async (phoneNumber: string, otp: string) => {
+    const { data } = await api.post<{
+      success: boolean;
+      message: string;
+      user: User;
+    }>('/auth/verify-phone', { phoneNumber, otp });
     return data;
   },
 };

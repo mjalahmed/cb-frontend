@@ -10,7 +10,10 @@ export type PaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED';
 
 export interface User {
   id: string;
+  username: string;
+  email?: string | null;
   phoneNumber: string;
+  phoneVerified: boolean;
   role: UserRole;
   createdAt: string;
   updatedAt?: string;

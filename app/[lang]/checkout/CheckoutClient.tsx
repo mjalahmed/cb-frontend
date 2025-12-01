@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useCartStore } from '@/store/cart-store';
 import { useAuthStore } from '@/store/auth-store';
 import { ordersApi, paymentsApi } from '@/lib/api-client';
-import { OTPLoginModal } from '@/components/OTPLoginModal';
+import { LoginModal } from '@/components/LoginModal';
 import { useRouter } from '@/i18n/routing';
 import { PaymentForm } from './PaymentForm';
 import type { OrderType, PaymentMethod } from '@/types';
@@ -295,7 +295,7 @@ export function CheckoutClient() {
         </div>
       </div>
 
-      <OTPLoginModal
+      <LoginModal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
         onSuccess={() => setShowLoginModal(false)}

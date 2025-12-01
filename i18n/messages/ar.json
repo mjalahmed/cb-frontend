@@ -61,15 +61,22 @@
     "loginToContinue": "يرجى تسجيل الدخول للمتابعة مع طلبك"
   },
   "auth": {
+    "login": "تسجيل الدخول",
+    "register": "التسجيل",
+    "username": "اسم المستخدم",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
     "phoneNumber": "رقم الهاتف",
     "enterPhoneNumber": "أدخل رقم هاتفك",
     "sendOTP": "إرسال رمز التحقق",
     "enterOTP": "أدخل رمز التحقق",
     "verifyOTP": "التحقق من رمز التحقق",
+    "verifyPhone": "التحقق من الهاتف",
     "resendOTP": "إعادة إرسال رمز التحقق",
     "otpSent": "تم إرسال رمز التحقق إلى هاتفك",
     "invalidOTP": "رمز التحقق غير صحيح",
-    "loginSuccess": "تم تسجيل الدخول بنجاح!"
+    "loginSuccess": "تم تسجيل الدخول بنجاح!",
+    "registerSuccess": "تم التسجيل بنجاح!"
   },
   "orders": {
     "title": "طلباتي",

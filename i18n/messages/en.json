@@ -61,15 +61,22 @@
     "loginToContinue": "Please login to continue with your order"
   },
   "auth": {
+    "login": "Login",
+    "register": "Register",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
     "phoneNumber": "Phone Number",
     "enterPhoneNumber": "Enter your phone number",
     "sendOTP": "Send OTP",
     "enterOTP": "Enter OTP Code",
     "verifyOTP": "Verify OTP",
+    "verifyPhone": "Verify Phone",
     "resendOTP": "Resend OTP",
     "otpSent": "OTP sent to your phone",
     "invalidOTP": "Invalid OTP code",
-    "loginSuccess": "Login successful!"
+    "loginSuccess": "Login successful!",
+    "registerSuccess": "Registration successful!"
   },
   "orders": {
     "title": "My Orders",

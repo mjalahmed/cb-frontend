@@ -1,23 +1,28 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { Link, usePathname } from '@/i18n/routing';
 import { useAuthStore } from '@/store/auth-store';
 import { useCartStore } from '@/store/cart-store';
 import { ShoppingCart, User, LogOut, Menu as MenuIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from '@/i18n/routing';
-import { OTPLoginModal } from './OTPLoginModal';
+import { LoginModal } from './LoginModal';
+import { RegisterModal } from './RegisterModal';
+import { PhoneVerificationModal } from './PhoneVerificationModal';
 
 export function Navbar() {
   const t = useTranslations('nav');
   const pathname = usePathname();
   const router = useRouter();
+  const locale = useLocale();
   const { user, logout, isAuthenticated } = useAuthStore();
   const { getItemCount } = useCartStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const locale = pathname.split('/')[1] || 'en';
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showPhoneVerificationModal, setShowPhoneVerificationModal] = useState(false);
+  const [pendingPhoneNumber, setPendingPhoneNumber] = useState<string>('');
 
   const cartCount = getItemCount();
 
@@ -29,9 +34,9 @@ export function Navbar() {
 
   const toggleLanguage = () => {
     const newLocale = locale === 'en' ? 'ar' : 'en';
-    // usePathname from next-intl already returns path without locale
-    // So we can use it directly with the locale option
+    // Get current path without locale (usePathname already returns path without locale)
     const currentPath = pathname || '/menu';
+    // Use router.replace with locale option to switch language
     router.replace(currentPath, { locale: newLocale });
   };
 
@@ -89,7 +94,7 @@ export function Navbar() {
             </button>
             {isAuthenticated() ? (
               <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                <span className="text-sm text-gray-600">{user?.phoneNumber}</span>
+                <span className="text-sm text-gray-600">{user?.username || user?.phoneNumber}</span>
                 <button
                   onClick={handleLogout}
                   className="flex items-center space-x-1 rtl:space-x-reverse px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-600 transition-colors"
@@ -99,12 +104,20 @@ export function Navbar() {
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => setShowLoginModal(true)}
-                className="px-3 py-2 rounded-md text-sm font-medium text-chocolate-600 hover:text-chocolate-700 hover:bg-chocolate-50 transition-colors"
-              >
-                {t('login')}
-              </button>
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                <button
+                  onClick={() => setShowRegisterModal(true)}
+                  className="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-chocolate-700 hover:bg-gray-100 transition-colors"
+                >
+                  {t('register')}
+                </button>
+                <button
+                  onClick={() => setShowLoginModal(true)}
+                  className="px-3 py-2 rounded-md text-sm font-medium text-chocolate-600 hover:text-chocolate-700 hover:bg-chocolate-50 transition-colors"
+                >
+                  {t('login')}
+                </button>
+              </div>
             )}
           </div>
 
@@ -167,7 +180,7 @@ export function Navbar() {
               </button>
               {isAuthenticated() ? (
                 <div className="px-3 py-2">
-                  <div className="text-sm text-gray-600 mb-2">{user?.phoneNumber}</div>
+                  <div className="text-sm text-gray-600 mb-2">{user?.username || user?.phoneNumber}</div>
                   <button
                     onClick={handleLogout}
                     className="flex items-center space-x-1 rtl:space-x-reverse text-base font-medium text-gray-700"
@@ -177,26 +190,74 @@ export function Navbar() {
                   </button>
                 </div>
               ) : (
-                <button
-                  onClick={() => {
-                    setShowLoginModal(true);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="px-3 py-2 rounded-md text-base font-medium text-chocolate-600 hover:text-chocolate-700 hover:bg-chocolate-50 transition-colors text-left rtl:text-right"
-                >
-                  {t('login')}
-                </button>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => {
+                      setShowRegisterModal(true);
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-chocolate-700 hover:bg-gray-100 transition-colors text-left rtl:text-right"
+                  >
+                    {t('register')}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowLoginModal(true);
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full px-3 py-2 rounded-md text-base font-medium text-chocolate-600 hover:text-chocolate-700 hover:bg-chocolate-50 transition-colors text-left rtl:text-right"
+                  >
+                    {t('login')}
+                  </button>
+                </div>
               )}
             </div>
           </div>
         )}
       </div>
 
-      <OTPLoginModal
+      <LoginModal
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
         onSuccess={() => {
           setShowLoginModal(false);
+        }}
+        onSwitchToRegister={() => {
+          setShowLoginModal(false);
+          setShowRegisterModal(true);
+        }}
+      />
+
+      <RegisterModal
+        isOpen={showRegisterModal}
+        onClose={() => setShowRegisterModal(false)}
+        onSuccess={(user) => {
+          // After registration, show phone verification
+          if (user.phoneNumber && !user.phoneVerified) {
+            setPendingPhoneNumber(user.phoneNumber);
+            setShowRegisterModal(false);
+            setShowPhoneVerificationModal(true);
+          } else {
+            setShowRegisterModal(false);
+          }
+        }}
+        onSwitchToLogin={() => {
+          setShowRegisterModal(false);
+          setShowLoginModal(true);
+        }}
+      />
+
+      <PhoneVerificationModal
+        isOpen={showPhoneVerificationModal}
+        onClose={() => setShowPhoneVerificationModal(false)}
+        onSuccess={() => {
+          setShowPhoneVerificationModal(false);
+          setPendingPhoneNumber('');
+        }}
+        phoneNumber={pendingPhoneNumber}
+        onSkip={() => {
+          setShowPhoneVerificationModal(false);
+          setPendingPhoneNumber('');
         }}
       />
     </nav>
