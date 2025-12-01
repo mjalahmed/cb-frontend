@@ -1,0 +1,100 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "quantity": "Quantity",
+    "price": "Price"
+  },
+  "nav": {
+    "menu": "Menu",
+    "cart": "Cart",
+    "orders": "My Orders",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "menu": {
+    "title": "Our Menu",
+    "allCategories": "All Categories",
+    "addToCart": "Add to Cart",
+    "outOfStock": "Out of Stock",
+    "available": "Available"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "emptyDescription": "Add some delicious items to your cart!",
+    "checkout": "Checkout",
+    "continueShopping": "Continue Shopping",
+    "removeItem": "Remove item"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "orderType": "Order Type",
+    "delivery": "Delivery",
+    "pickup": "Pickup",
+    "scheduleTime": "Schedule Time",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "paymentMethod": "Payment Method",
+    "cash": "Cash on Delivery/Pickup",
+    "card": "Online Card Payment",
+    "placeOrder": "Place Order",
+    "processing": "Processing...",
+    "loginRequired": "Login Required",
+    "loginToContinue": "Please login to continue with your order"
+  },
+  "auth": {
+    "phoneNumber": "Phone Number",
+    "enterPhoneNumber": "Enter your phone number",
+    "sendOTP": "Send OTP",
+    "enterOTP": "Enter OTP Code",
+    "verifyOTP": "Verify OTP",
+    "resendOTP": "Resend OTP",
+    "otpSent": "OTP sent to your phone",
+    "invalidOTP": "Invalid OTP code",
+    "loginSuccess": "Login successful!"
+  },
+  "orders": {
+    "title": "My Orders",
+    "noOrders": "No orders yet",
+    "noOrdersDescription": "Your orders will appear here",
+    "orderNumber": "Order #",
+    "status": "Status",
+    "orderType": "Order Type",
+    "total": "Total",
+    "date": "Date",
+    "viewDetails": "View Details",
+    "pending": "Pending",
+    "preparing": "Preparing",
+    "ready": "Ready",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "payment": {
+    "processing": "Processing payment...",
+    "success": "Payment successful!",
+    "failed": "Payment failed",
+    "cardNumber": "Card Number",
+    "expiryDate": "Expiry Date",
+    "cvv": "CVV",
+    "cardholderName": "Cardholder Name"
+  }
+}
+

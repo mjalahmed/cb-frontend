@@ -1,0 +1,100 @@
+{
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "save": "حفظ",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "remove": "إزالة",
+    "close": "إغلاق",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "search": "بحث",
+    "filter": "تصفية",
+    "clear": "مسح",
+    "total": "الإجمالي",
+    "subtotal": "المجموع الفرعي",
+    "quantity": "الكمية",
+    "price": "السعر"
+  },
+  "nav": {
+    "menu": "القائمة",
+    "cart": "السلة",
+    "orders": "طلباتي",
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج"
+  },
+  "menu": {
+    "title": "قائمتنا",
+    "allCategories": "جميع الفئات",
+    "addToCart": "أضف إلى السلة",
+    "outOfStock": "غير متوفر",
+    "available": "متوفر"
+  },
+  "cart": {
+    "title": "سلة التسوق",
+    "empty": "السلة فارغة",
+    "emptyDescription": "أضف بعض العناصر اللذيذة إلى سلتك!",
+    "checkout": "الدفع",
+    "continueShopping": "متابعة التسوق",
+    "removeItem": "إزالة العنصر"
+  },
+  "checkout": {
+    "title": "الدفع",
+    "orderType": "نوع الطلب",
+    "delivery": "توصيل",
+    "pickup": "استلام",
+    "scheduleTime": "جدولة الوقت",
+    "selectDate": "اختر التاريخ",
+    "selectTime": "اختر الوقت",
+    "paymentMethod": "طريقة الدفع",
+    "cash": "نقد عند التوصيل/الاستلام",
+    "card": "دفع بالبطاقة عبر الإنترنت",
+    "placeOrder": "تقديم الطلب",
+    "processing": "جاري المعالجة...",
+    "loginRequired": "تسجيل الدخول مطلوب",
+    "loginToContinue": "يرجى تسجيل الدخول للمتابعة مع طلبك"
+  },
+  "auth": {
+    "phoneNumber": "رقم الهاتف",
+    "enterPhoneNumber": "أدخل رقم هاتفك",
+    "sendOTP": "إرسال رمز التحقق",
+    "enterOTP": "أدخل رمز التحقق",
+    "verifyOTP": "التحقق من رمز التحقق",
+    "resendOTP": "إعادة إرسال رمز التحقق",
+    "otpSent": "تم إرسال رمز التحقق إلى هاتفك",
+    "invalidOTP": "رمز التحقق غير صحيح",
+    "loginSuccess": "تم تسجيل الدخول بنجاح!"
+  },
+  "orders": {
+    "title": "طلباتي",
+    "noOrders": "لا توجد طلبات بعد",
+    "noOrdersDescription": "ستظهر طلباتك هنا",
+    "orderNumber": "طلب رقم",
+    "status": "الحالة",
+    "orderType": "نوع الطلب",
+    "total": "الإجمالي",
+    "date": "التاريخ",
+    "viewDetails": "عرض التفاصيل",
+    "pending": "قيد الانتظار",
+    "preparing": "قيد التحضير",
+    "ready": "جاهز",
+    "completed": "مكتمل",
+    "cancelled": "ملغي"
+  },
+  "payment": {
+    "processing": "جاري معالجة الدفع...",
+    "success": "تم الدفع بنجاح!",
+    "failed": "فشل الدفع",
+    "cardNumber": "رقم البطاقة",
+    "expiryDate": "تاريخ الانتهاء",
+    "cvv": "CVV",
+    "cardholderName": "اسم حامل البطاقة"
+  }
+}
+
