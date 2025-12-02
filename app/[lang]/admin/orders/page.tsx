@@ -1,0 +1,16 @@
+import { AdminOrdersClient } from './AdminOrdersClient';
+
+export default async function AdminOrdersPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <AdminOrdersClient />
+    </div>
+  );
+}
+

@@ -27,6 +27,7 @@
     "cart": "السلة",
     "orders": "طلباتي",
     "login": "تسجيل الدخول",
+    "register": "التسجيل",
     "logout": "تسجيل الخروج"
   },
   "menu": {
@@ -102,6 +103,45 @@
     "expiryDate": "تاريخ الانتهاء",
     "cvv": "CVV",
     "cardholderName": "اسم حامل البطاقة"
+  },
+  "admin": {
+    "admin": "الإدارة",
+    "orders": "الطلبات",
+    "products": "المنتجات",
+    "allStatuses": "جميع الحالات",
+    "noOrders": "لا توجد طلبات",
+    "noOrdersDescription": "لا توجد طلبات تطابق الفلتر المحدد",
+    "customer": "العميل",
+    "scheduled": "مجدول",
+    "payment": "الدفع",
+    "paid": "مدفوع",
+    "pending": "قيد الانتظار",
+    "delivery": "توصيل",
+    "pickup": "استلام",
+    "addProduct": "إضافة منتج",
+    "editProduct": "تعديل منتج",
+    "edit": "تعديل",
+    "update": "تحديث",
+    "create": "إنشاء",
+    "productName": "اسم المنتج",
+    "description": "الوصف",
+    "price": "السعر",
+    "imageUrl": "رابط الصورة",
+    "category": "الفئة",
+    "selectCategory": "اختر الفئة",
+    "noCategories": "لا توجد فئات متاحة",
+    "createCategoryFirst": "أنشئ فئة أولاً",
+    "available": "متوفر",
+    "unavailable": "غير متوفر",
+    "categories": "الفئات",
+    "addCategory": "إضافة فئة",
+    "editCategory": "تعديل فئة",
+    "categoryName": "اسم الفئة",
+    "noCategoriesDescription": "أنشئ فئات لتنظيم منتجاتك",
+    "image": "الصورة",
+    "imageUploadHint": "قم بتحميل ملف صورة",
+    "or": "أو",
+    "uploading": "جاري التحميل..."
   }
 }
 

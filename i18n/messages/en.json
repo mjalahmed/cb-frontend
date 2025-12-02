@@ -27,6 +27,7 @@
     "cart": "Cart",
     "orders": "My Orders",
     "login": "Login",
+    "register": "Register",
     "logout": "Logout"
   },
   "menu": {
@@ -102,6 +103,45 @@
     "expiryDate": "Expiry Date",
     "cvv": "CVV",
     "cardholderName": "Cardholder Name"
+  },
+  "admin": {
+    "admin": "Admin",
+    "orders": "Orders",
+    "products": "Products",
+    "allStatuses": "All Statuses",
+    "noOrders": "No orders found",
+    "noOrdersDescription": "No orders match the selected filter",
+    "customer": "Customer",
+    "scheduled": "Scheduled",
+    "payment": "Payment",
+    "paid": "Paid",
+    "pending": "Pending",
+    "delivery": "Delivery",
+    "pickup": "Pickup",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "edit": "Edit",
+    "update": "Update",
+    "create": "Create",
+    "productName": "Product Name",
+    "description": "Description",
+    "price": "Price",
+    "imageUrl": "Image URL",
+    "category": "Category",
+    "selectCategory": "Select Category",
+    "noCategories": "No categories available",
+    "createCategoryFirst": "Create a category first",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "categories": "Categories",
+    "addCategory": "Add Category",
+    "editCategory": "Edit Category",
+    "categoryName": "Category Name",
+    "noCategoriesDescription": "Create categories to organize your products",
+    "image": "Image",
+    "imageUploadHint": "Upload an image file",
+    "or": "OR",
+    "uploading": "Uploading..."
   }
 }
 

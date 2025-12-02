@@ -299,6 +299,7 @@ export function CheckoutClient() {
         isOpen={showLoginModal}
         onClose={() => setShowLoginModal(false)}
         onSuccess={() => setShowLoginModal(false)}
+        redirectAfterLogin={false}
       />
     </div>
   );

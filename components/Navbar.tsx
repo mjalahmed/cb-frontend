@@ -62,27 +62,43 @@ export function Navbar() {
             >
               {t('menu')}
             </Link>
-            <Link
-              href="/cart"
-              className="relative px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-chocolate-700 hover:bg-gray-100 transition-colors"
-            >
-              {t('cart')}
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 rtl:right-auto rtl:-left-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-            {isAuthenticated() && (
+            {user?.role !== 'ADMIN' && (
+              <>
+                <Link
+                  href="/cart"
+                  className="relative px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-chocolate-700 hover:bg-gray-100 transition-colors"
+                >
+                  {t('cart')}
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 rtl:right-auto rtl:-left-1 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+                {isAuthenticated() && (
+                  <Link
+                    href="/orders"
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      pathname.includes('/orders') && !pathname.includes('/admin')
+                        ? 'text-chocolate-700 bg-chocolate-50'
+                        : 'text-gray-700 hover:text-chocolate-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {t('orders')}
+                  </Link>
+                )}
+              </>
+            )}
+            {isAuthenticated() && user?.role === 'ADMIN' && (
               <Link
-                href="/orders"
+                href="/admin/orders"
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  pathname.includes('/orders')
+                  pathname.includes('/admin')
                     ? 'text-chocolate-700 bg-chocolate-50'
                     : 'text-gray-700 hover:text-chocolate-700 hover:bg-gray-100'
                 }`}
               >
-                {t('orders')}
+                {t('admin', { ns: 'admin' })}
               </Link>
             )}
             <button
@@ -123,17 +139,19 @@ export function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-2 rtl:space-x-reverse">
-            <Link
-              href="/cart"
-              className="relative p-2 text-gray-700 hover:text-chocolate-700"
-            >
-              <ShoppingCart className="w-6 h-6" />
-              {cartCount > 0 && (
-                <span className="absolute top-0 right-0 rtl:right-auto rtl:left-0 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
+            {user?.role !== 'ADMIN' && (
+              <Link
+                href="/cart"
+                className="relative p-2 text-gray-700 hover:text-chocolate-700"
+              >
+                <ShoppingCart className="w-6 h-6" />
+                {cartCount > 0 && (
+                  <span className="absolute top-0 right-0 rtl:right-auto rtl:left-0 bg-primary-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </Link>
+            )}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 text-gray-700 hover:text-chocolate-700"
@@ -158,17 +176,30 @@ export function Navbar() {
               >
                 {t('menu')}
               </Link>
-              {isAuthenticated() && (
+              {isAuthenticated() && user?.role !== 'ADMIN' && (
                 <Link
                   href="/orders"
                   onClick={() => setMobileMenuOpen(false)}
                   className={`px-3 py-2 rounded-md text-base font-medium ${
-                    pathname.includes('/orders')
+                    pathname.includes('/orders') && !pathname.includes('/admin')
                       ? 'text-chocolate-700 bg-chocolate-50'
                       : 'text-gray-700'
                   }`}
                 >
                   {t('orders')}
+                </Link>
+              )}
+              {isAuthenticated() && user?.role === 'ADMIN' && (
+                <Link
+                  href="/admin/orders"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`px-3 py-2 rounded-md text-base font-medium ${
+                    pathname.includes('/admin')
+                      ? 'text-chocolate-700 bg-chocolate-50'
+                      : 'text-gray-700'
+                  }`}
+                >
+                  {t('admin', { ns: 'admin' })}
                 </Link>
               )}
               <button

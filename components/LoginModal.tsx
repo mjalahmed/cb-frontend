@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { authApi } from '@/lib/api-client';
 import { useAuthStore } from '@/store/auth-store';
+import { useRouter } from '@/i18n/routing';
 import { X, Loader2, User as UserIcon, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -12,11 +13,13 @@ interface LoginModalProps {
   onClose: () => void;
   onSuccess: () => void;
   onSwitchToRegister?: () => void;
+  redirectAfterLogin?: boolean;
 }
 
-export function LoginModal({ isOpen, onClose, onSuccess, onSwitchToRegister }: LoginModalProps) {
+export function LoginModal({ isOpen, onClose, onSuccess, onSwitchToRegister, redirectAfterLogin = true }: LoginModalProps) {
   const t = useTranslations('auth');
   const { setAuth } = useAuthStore();
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -39,6 +42,15 @@ export function LoginModal({ isOpen, onClose, onSuccess, onSwitchToRegister }: L
       onClose();
       setUsername('');
       setPassword('');
+      
+      // Redirect based on user role (only if redirectAfterLogin is true)
+      if (redirectAfterLogin) {
+        if (user.role === 'ADMIN') {
+          router.push('/admin/orders');
+        } else {
+          router.push('/menu');
+        }
+      }
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.error ||
