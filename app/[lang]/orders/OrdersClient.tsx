@@ -29,10 +29,21 @@ const statusColors = {
 
 export function OrdersClient() {
   const t = useTranslations('orders');
+  const tCommon = useTranslations('common');
+  const tCheckout = useTranslations('checkout');
   const { isAuthenticated } = useAuthStore();
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(20);
+  const [sortBy, setSortBy] = useState<'date' | 'status' | 'amount'>('date');
+  const [pagination, setPagination] = useState<{
+    page: number;
+    limit: number;
+    totalCount: number;
+    totalPages: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -43,14 +54,16 @@ export function OrdersClient() {
     // Poll for order updates every 10 seconds
     const interval = setInterval(loadOrders, 10000);
     return () => clearInterval(interval);
-  }, [isAuthenticated, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, router, page, sortBy]);
 
   const loadOrders = async () => {
     try {
-      const fetchedOrders = await ordersApi.getMyOrders();
-      setOrders(fetchedOrders.sort((a, b) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      ));
+      const fetchedData = await ordersApi.getMyOrders(page, limit, sortBy);
+      setOrders(fetchedData.orders);
+      if (fetchedData.pagination) {
+        setPagination(fetchedData.pagination);
+      }
     } catch (error: any) {
       if (error.response?.status !== 401) {
         const errorMessage = error.response?.data?.error || 
@@ -77,7 +90,7 @@ export function OrdersClient() {
   };
 
   const getOrderTypeTranslation = (type: string) => {
-    return type === 'DELIVERY' ? t('delivery', { ns: 'checkout' }) : t('pickup', { ns: 'checkout' });
+    return type === 'DELIVERY' ? tCheckout('delivery') : tCheckout('pickup');
   };
 
   if (loading) {
@@ -90,7 +103,26 @@ export function OrdersClient() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-chocolate-800 mb-8">{t('title')}</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+        <h1 className="text-3xl font-bold text-chocolate-800 mb-4 sm:mb-0">{t('title')}</h1>
+        
+        {/* Sort By */}
+        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+          <label className="text-sm text-gray-700">Sort by:</label>
+          <select
+            value={sortBy}
+            onChange={(e) => {
+              setSortBy(e.target.value as 'date' | 'status' | 'amount');
+              setPage(1);
+            }}
+            className="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-chocolate-500 focus:border-transparent"
+          >
+            <option value="date">Date (newest first)</option>
+            <option value="status">Status</option>
+            <option value="amount">Amount (highest first)</option>
+          </select>
+        </div>
+      </div>
 
       {orders.length === 0 ? (
         <div className="text-center py-12">
@@ -152,7 +184,7 @@ export function OrdersClient() {
                       <div className="flex-1">
                         <p className="font-medium text-gray-900">{item.product.name}</p>
                         <p className="text-sm text-gray-500">
-                          {t('quantity', { ns: 'common' })}: {item.quantity} × ${parseFloat(item.priceAtOrder).toFixed(2)}
+                          {tCommon('quantity')}: {item.quantity} × ${parseFloat(item.priceAtOrder).toFixed(2)}
                         </p>
                       </div>
                       <p className="font-semibold text-gray-900">
@@ -191,6 +223,29 @@ export function OrdersClient() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {pagination && pagination.totalPages > 1 && (
+        <div className="mt-8 flex justify-center items-center space-x-2 rtl:space-x-reverse">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <span className="px-4 py-2 text-gray-700">
+            Page {pagination.page} of {pagination.totalPages} ({pagination.totalCount} total)
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
+            disabled={page >= pagination.totalPages}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
         </div>
       )}
     </div>

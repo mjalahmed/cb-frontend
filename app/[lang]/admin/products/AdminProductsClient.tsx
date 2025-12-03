@@ -52,22 +52,28 @@ export function AdminProductsClient() {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const [fetchedProducts, fetchedCategories] = await Promise.all([
-        productsApi.getAll(),
-        adminCategoriesApi.getAll().catch(() => []), // Fallback to empty array if endpoint doesn't exist
+      const [fetchedProductsData, fetchedCategoriesData] = await Promise.all([
+        adminProductsApi.getAll(), // Use admin endpoint to get ALL products including unavailable ones
+        adminCategoriesApi.getAll().catch(() => ({ categories: [] })), // Fallback to empty array if endpoint doesn't exist
       ]);
-      setProducts(fetchedProducts);
+      
+      // Admin endpoint returns all products (available and unavailable)
+      const productsList = fetchedProductsData.products;
+      setProducts(productsList);
 
       // Use fetched categories, or extract from products as fallback
+      const fetchedCategories = Array.isArray(fetchedCategoriesData) 
+        ? fetchedCategoriesData 
+        : fetchedCategoriesData.categories || [];
       if (fetchedCategories.length > 0) {
         setCategories(fetchedCategories);
       } else {
         // Extract unique categories from products as fallback
         const uniqueCategories = Array.from(
           new Map(
-            fetchedProducts
-              .filter((p) => p.category)
-              .map((p) => [p.category!.id, p.category!])
+            productsList
+              .filter((p: Product) => p.category)
+              .map((p: Product) => [p.category!.id, p.category!])
           ).values()
         );
         setCategories(uniqueCategories);
@@ -432,6 +438,7 @@ export function AdminProductsClient() {
                   {/* Image Preview */}
                   {(imagePreview || formData.imageUrl) && (
                     <div className="mt-2">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={imagePreview || formData.imageUrl}
                         alt="Preview"

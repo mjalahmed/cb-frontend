@@ -31,6 +31,14 @@ export function AdminCategoriesClient() {
     description: '',
   });
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(20);
+  const [pagination, setPagination] = useState<{
+    page: number;
+    limit: number;
+    totalCount: number;
+    totalPages: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated() || user?.role !== 'ADMIN') {
@@ -38,17 +46,17 @@ export function AdminCategoriesClient() {
       return;
     }
     loadCategories();
-  }, [isAuthenticated, user, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, user, router, page]);
 
   const loadCategories = async () => {
     try {
       setLoading(true);
-      const fetchedCategories = await adminCategoriesApi.getAll();
-      setCategories(
-        fetchedCategories.sort(
-          (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        )
-      );
+      const fetchedData = await adminCategoriesApi.getAll(page, limit);
+      setCategories(fetchedData.categories);
+      if (fetchedData.pagination) {
+        setPagination(fetchedData.pagination);
+      }
     } catch (error: any) {
       toast.error('Failed to load categories');
       console.error(error);
@@ -72,7 +80,12 @@ export function AdminCategoriesClient() {
       toast.success('Category created successfully');
       setShowAddModal(false);
       resetForm();
-      loadCategories();
+      // If we're on the last page, go to it to see the new category
+      if (pagination && page < pagination.totalPages) {
+        setPage(pagination.totalPages);
+      } else {
+        loadCategories();
+      }
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.error ||
@@ -117,7 +130,12 @@ export function AdminCategoriesClient() {
     try {
       await adminCategoriesApi.delete(categoryId);
       toast.success('Category deleted successfully');
-      loadCategories();
+      // If we're on a page that no longer has items, go to previous page
+      if (pagination && categories.length === 1 && page > 1) {
+        setPage(page - 1);
+      } else {
+        loadCategories();
+      }
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.error ||
@@ -228,6 +246,29 @@ export function AdminCategoriesClient() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {pagination && pagination.totalPages > 1 && (
+        <div className="mt-8 flex justify-center items-center space-x-2 rtl:space-x-reverse">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <span className="px-4 py-2 text-gray-700">
+            Page {pagination.page} of {pagination.totalPages} ({pagination.totalCount} total)
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
+            disabled={page >= pagination.totalPages}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
         </div>
       )}
 

@@ -16,20 +16,36 @@ export function MenuClient() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(20);
+  const [pagination, setPagination] = useState<{
+    page: number;
+    limit: number;
+    totalCount: number;
+    totalPages: number;
+  } | null>(null);
+
+  useEffect(() => {
+    setPage(1); // Reset to first page when category changes
+  }, [selectedCategory]);
 
   useEffect(() => {
     loadProducts();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, page]);
 
   const loadProducts = async () => {
     try {
       setLoading(true);
       // Load products and categories in parallel
-      const [fetchedProducts, fetchedCategories] = await Promise.all([
-        productsApi.getAll(),
+      const [fetchedData, fetchedCategories] = await Promise.all([
+        productsApi.getAll(selectedCategory || undefined, page, limit),
         categoriesApi.getAll().catch(() => []), // Fallback to empty array if endpoint doesn't exist
       ]);
-      setProducts(fetchedProducts);
+      setProducts(fetchedData.products);
+      if (fetchedData.pagination) {
+        setPagination(fetchedData.pagination);
+      }
 
       // Use fetched categories if available, otherwise extract from products
       if (fetchedCategories.length > 0) {
@@ -38,7 +54,7 @@ export function MenuClient() {
         // Extract unique categories from products as fallback
         const uniqueCategories = Array.from(
           new Map(
-            fetchedProducts
+            fetchedData.products
               .filter((p) => p.category)
               .map((p) => [p.category!.id, p.category!])
           ).values()
@@ -216,6 +232,29 @@ export function MenuClient() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {pagination && pagination.totalPages > 1 && (
+        <div className="mt-8 flex justify-center items-center space-x-2 rtl:space-x-reverse">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <span className="px-4 py-2 text-gray-700">
+            Page {pagination.page} of {pagination.totalPages} ({pagination.totalCount} total)
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
+            disabled={page >= pagination.totalPages}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
         </div>
       )}
     </div>

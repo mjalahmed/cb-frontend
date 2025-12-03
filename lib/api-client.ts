@@ -59,13 +59,30 @@ export const userApi = {
 
 // Products
 export const productsApi = {
-  getAll: async (categoryId?: string) => {
-    const body: { categoryId?: string } = {};
+  getAll: async (categoryId?: string, page?: number, limit?: number) => {
+    const body: { categoryId?: string; page?: number; limit?: number } = {};
     if (categoryId) {
       body.categoryId = categoryId;
     }
-    const { data } = await api.post<{ products: Product[] }>('/menu/products', body);
-    return data.products;
+    if (page !== undefined) {
+      body.page = page;
+    }
+    if (limit !== undefined) {
+      body.limit = limit;
+    }
+    const { data } = await api.post<{ 
+      products: Product[];
+      pagination?: {
+        page: number;
+        limit: number;
+        totalCount: number;
+        totalPages: number;
+      };
+    }>('/menu/products', body);
+    return {
+      products: data.products,
+      pagination: data.pagination,
+    };
   },
 };
 
@@ -94,9 +111,30 @@ export const ordersApi = {
     const { data } = await api.post<{ order: Order }>('/orders', orderData);
     return data.order;
   },
-  getMyOrders: async () => {
-    const { data } = await api.post<{ orders: Order[] }>('/orders/my', {});
-    return data.orders;
+  getMyOrders: async (page?: number, limit?: number, sortBy?: 'date' | 'status' | 'amount') => {
+    const body: { page?: number; limit?: number; sortBy?: string } = {};
+    if (page !== undefined) {
+      body.page = page;
+    }
+    if (limit !== undefined) {
+      body.limit = limit;
+    }
+    if (sortBy) {
+      body.sortBy = sortBy;
+    }
+    const { data } = await api.post<{ 
+      orders: Order[];
+      pagination?: {
+        page: number;
+        limit: number;
+        totalCount: number;
+        totalPages: number;
+      };
+    }>('/orders/my', body);
+    return {
+      orders: data.orders,
+      pagination: data.pagination,
+    };
   },
 };
 
@@ -113,6 +151,28 @@ export const paymentsApi = {
 
 // Admin - Products
 export const adminProductsApi = {
+  getAll: async (page?: number, limit?: number) => {
+    const body: { page?: number; limit?: number } = {};
+    if (page !== undefined) {
+      body.page = page;
+    }
+    if (limit !== undefined) {
+      body.limit = limit;
+    }
+    const { data } = await api.post<{ 
+      products: Product[];
+      pagination?: {
+        page: number;
+        limit: number;
+        totalCount: number;
+        totalPages: number;
+      };
+    }>('/admin/products', body);
+    return {
+      products: data.products,
+      pagination: data.pagination,
+    };
+  },
   create: async (productData: {
     name: string;
     description?: string;
@@ -121,7 +181,7 @@ export const adminProductsApi = {
     categoryId: string;
     isAvailable?: boolean;
   }) => {
-    const { data } = await api.post<{ product: Product }>('/admin/products', productData);
+    const { data } = await api.post<{ product: Product }>('/admin/products/create', productData);
     return data.product;
   },
   update: async (productId: string, productData: {
@@ -142,13 +202,33 @@ export const adminProductsApi = {
 
 // Admin - Orders
 export const adminOrdersApi = {
-  getAll: async (status?: OrderStatus) => {
-    const body: { status?: OrderStatus } = {};
+  getAll: async (status?: OrderStatus, page?: number, limit?: number, sortBy?: 'date' | 'status' | 'amount') => {
+    const body: { status?: OrderStatus; page?: number; limit?: number; sortBy?: string } = {};
     if (status) {
       body.status = status;
     }
-    const { data } = await api.post<{ orders: Order[] }>('/admin/orders', body);
-    return data.orders;
+    if (page !== undefined) {
+      body.page = page;
+    }
+    if (limit !== undefined) {
+      body.limit = limit;
+    }
+    if (sortBy) {
+      body.sortBy = sortBy;
+    }
+    const { data } = await api.post<{ 
+      orders: Order[];
+      pagination?: {
+        page: number;
+        limit: number;
+        totalCount: number;
+        totalPages: number;
+      };
+    }>('/admin/orders', body);
+    return {
+      orders: data.orders,
+      pagination: data.pagination,
+    };
   },
   updateStatus: async (orderId: string, status: OrderStatus) => {
     const { data } = await api.post<{ order: Order }>('/admin/orders/status', {
@@ -161,9 +241,27 @@ export const adminOrdersApi = {
 
 // Admin - Categories
 export const adminCategoriesApi = {
-  getAll: async () => {
-    const { data } = await api.post<{ categories: Category[] }>('/admin/categories', {});
-    return data.categories;
+  getAll: async (page?: number, limit?: number) => {
+    const body: { page?: number; limit?: number } = {};
+    if (page !== undefined) {
+      body.page = page;
+    }
+    if (limit !== undefined) {
+      body.limit = limit;
+    }
+    const { data } = await api.post<{ 
+      categories: Category[];
+      pagination?: {
+        page: number;
+        limit: number;
+        totalCount: number;
+        totalPages: number;
+      };
+    }>('/admin/categories', body);
+    return {
+      categories: data.categories,
+      pagination: data.pagination,
+    };
   },
   get: async (categoryId: string) => {
     const { data } = await api.post<{ category: Category }>('/admin/categories/get', {

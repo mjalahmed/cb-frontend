@@ -47,6 +47,15 @@ export function AdminOrdersClient() {
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<OrderStatus | 'ALL'>('ALL');
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(20);
+  const [sortBy, setSortBy] = useState<'date' | 'status' | 'amount'>('date');
+  const [pagination, setPagination] = useState<{
+    page: number;
+    limit: number;
+    totalCount: number;
+    totalPages: number;
+  } | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated() || user?.role !== 'ADMIN') {
@@ -57,17 +66,17 @@ export function AdminOrdersClient() {
     // Poll for updates every 10 seconds
     const interval = setInterval(loadOrders, 10000);
     return () => clearInterval(interval);
-  }, [isAuthenticated, user, router, selectedStatus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, user, router, selectedStatus, page, sortBy]);
 
   const loadOrders = async () => {
     try {
       const status = selectedStatus === 'ALL' ? undefined : selectedStatus;
-      const fetchedOrders = await adminOrdersApi.getAll(status);
-      setOrders(
-        fetchedOrders.sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-      );
+      const fetchedData = await adminOrdersApi.getAll(status, page, limit, sortBy);
+      setOrders(fetchedData.orders);
+      if (fetchedData.pagination) {
+        setPagination(fetchedData.pagination);
+      }
     } catch (error: any) {
       if (error.response?.status !== 401) {
         toast.error('Failed to load orders');
@@ -113,26 +122,48 @@ export function AdminOrdersClient() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-        <h1 className="text-3xl font-bold text-chocolate-800 mb-4 sm:mb-0">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h1 className="text-3xl font-bold text-chocolate-800">
           {t('orders')}
         </h1>
 
-        {/* Status Filter */}
-        <div className="flex items-center space-x-2 rtl:space-x-reverse">
-          <Filter className="w-5 h-5 text-gray-600" />
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value as OrderStatus | 'ALL')}
-            className="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-chocolate-500 focus:border-transparent"
-          >
-            <option value="ALL">{t('allStatuses')}</option>
-            {statusOptions.map((status) => (
-              <option key={status} value={status}>
-                {getStatusTranslation(status)}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          {/* Status Filter */}
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+            <Filter className="w-5 h-5 text-gray-600" />
+            <select
+              value={selectedStatus}
+              onChange={(e) => {
+                setSelectedStatus(e.target.value as OrderStatus | 'ALL');
+                setPage(1);
+              }}
+              className="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-chocolate-500 focus:border-transparent"
+            >
+              <option value="ALL">{t('allStatuses')}</option>
+              {statusOptions.map((status) => (
+                <option key={status} value={status}>
+                  {getStatusTranslation(status)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Sort By */}
+          <div className="flex items-center space-x-2 rtl:space-x-reverse">
+            <label className="text-sm text-gray-700">Sort by:</label>
+            <select
+              value={sortBy}
+              onChange={(e) => {
+                setSortBy(e.target.value as 'date' | 'status' | 'amount');
+                setPage(1);
+              }}
+              className="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-chocolate-500 focus:border-transparent"
+            >
+              <option value="date">Date (newest first)</option>
+              <option value="status">Status</option>
+              <option value="amount">Amount (highest first)</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -262,6 +293,29 @@ export function AdminOrdersClient() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {pagination && pagination.totalPages > 1 && (
+        <div className="mt-8 flex justify-center items-center space-x-2 rtl:space-x-reverse">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <span className="px-4 py-2 text-gray-700">
+            Page {pagination.page} of {pagination.totalPages} ({pagination.totalCount} total)
+          </span>
+          <button
+            onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
+            disabled={page >= pagination.totalPages}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
         </div>
       )}
     </div>
