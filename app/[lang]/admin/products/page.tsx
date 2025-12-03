@@ -1,4 +1,5 @@
 import { AdminProductsClient } from './AdminProductsClient';
+import { setRequestLocale } from 'next-intl/server';
 
 export default async function AdminProductsPage({
   params,
@@ -6,6 +7,7 @@ export default async function AdminProductsPage({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
+  setRequestLocale(lang);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

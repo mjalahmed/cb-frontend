@@ -52,7 +52,7 @@ export const authApi = {
 // User
 export const userApi = {
   getMe: async () => {
-    const { data } = await api.get<{ user: User }>('/user/me');
+    const { data } = await api.post<{ user: User }>('/user/me', {});
     return data.user;
   },
 };
@@ -60,9 +60,26 @@ export const userApi = {
 // Products
 export const productsApi = {
   getAll: async (categoryId?: string) => {
-    const params = categoryId ? { category_id: categoryId } : {};
-    const { data } = await api.get<{ products: Product[] }>('/menu/products', { params });
+    const body: { categoryId?: string } = {};
+    if (categoryId) {
+      body.categoryId = categoryId;
+    }
+    const { data } = await api.post<{ products: Product[] }>('/menu/products', body);
     return data.products;
+  },
+};
+
+// Categories (Public)
+export const categoriesApi = {
+  getAll: async () => {
+    try {
+      const { data } = await api.post<{ categories: Category[] }>('/menu/categories', {});
+      return data.categories;
+    } catch (error) {
+      // If public endpoint doesn't exist, return empty array
+      // Categories will be extracted from products as fallback
+      return [];
+    }
   },
 };
 
@@ -78,7 +95,7 @@ export const ordersApi = {
     return data.order;
   },
   getMyOrders: async () => {
-    const { data } = await api.get<{ orders: Order[] }>('/orders/my');
+    const { data } = await api.post<{ orders: Order[] }>('/orders/my', {});
     return data.orders;
   },
 };
@@ -115,7 +132,10 @@ export const adminProductsApi = {
     categoryId?: string;
     isAvailable?: boolean;
   }) => {
-    const { data } = await api.patch<{ product: Product }>(`/admin/products/${productId}`, productData);
+    const { data } = await api.post<{ product: Product }>('/admin/products/update', {
+      id: productId,
+      ...productData,
+    });
     return data.product;
   },
 };
@@ -123,12 +143,18 @@ export const adminProductsApi = {
 // Admin - Orders
 export const adminOrdersApi = {
   getAll: async (status?: OrderStatus) => {
-    const params = status ? { status } : {};
-    const { data } = await api.get<{ orders: Order[] }>('/admin/orders', { params });
+    const body: { status?: OrderStatus } = {};
+    if (status) {
+      body.status = status;
+    }
+    const { data } = await api.post<{ orders: Order[] }>('/admin/orders', body);
     return data.orders;
   },
   updateStatus: async (orderId: string, status: OrderStatus) => {
-    const { data } = await api.patch<{ order: Order }>(`/admin/orders/${orderId}/status`, { status });
+    const { data } = await api.post<{ order: Order }>('/admin/orders/status', {
+      id: orderId,
+      status,
+    });
     return data.order;
   },
 };
@@ -136,25 +162,37 @@ export const adminOrdersApi = {
 // Admin - Categories
 export const adminCategoriesApi = {
   getAll: async () => {
-    const { data } = await api.get<{ categories: Category[] }>('/admin/categories');
+    const { data } = await api.post<{ categories: Category[] }>('/admin/categories', {});
     return data.categories;
+  },
+  get: async (categoryId: string) => {
+    const { data } = await api.post<{ category: Category }>('/admin/categories/get', {
+      id: categoryId,
+    });
+    return data.category;
   },
   create: async (categoryData: {
     name: string;
     description?: string;
   }) => {
-    const { data } = await api.post<{ category: Category }>('/admin/categories', categoryData);
+    const { data } = await api.post<{ category: Category }>('/admin/categories/create', categoryData);
     return data.category;
   },
   update: async (categoryId: string, categoryData: {
     name?: string;
     description?: string;
   }) => {
-    const { data } = await api.patch<{ category: Category }>(`/admin/categories/${categoryId}`, categoryData);
+    const { data } = await api.post<{ category: Category }>('/admin/categories/update', {
+      id: categoryId,
+      ...categoryData,
+    });
     return data.category;
   },
   delete: async (categoryId: string) => {
-    await api.delete(`/admin/categories/${categoryId}`);
+    const { data } = await api.post<{ success: boolean; message?: string }>('/admin/categories/delete', {
+      id: categoryId,
+    });
+    return data;
   },
 };
 

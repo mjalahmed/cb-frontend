@@ -271,7 +271,171 @@ Authorization: Bearer <admin-token>
 
 ---
 
-### 5. Order Routes
+### 5. Admin - Category Routes
+
+#### GET `/api/v1/admin/categories`
+
+Get all categories.
+
+**Access:** Admin Only
+
+**Headers:**
+```
+Authorization: Bearer <admin-token>
+```
+
+**Response (200):**
+```json
+{
+  "categories": [
+    {
+      "id": "uuid",
+      "name": "Chocolate Bars",
+      "description": "Various chocolate bar products",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
+```
+
+---
+
+#### POST `/api/v1/admin/categories`
+
+Create a new category.
+
+**Access:** Admin Only
+
+**Headers:**
+```
+Authorization: Bearer <admin-token>
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "name": "Chocolate Bars",
+  "description": "Various chocolate bar products"
+}
+```
+
+**Fields:**
+- `name` (required): Category name
+- `description` (optional): Category description
+
+**Response (201):**
+```json
+{
+  "category": {
+    "id": "uuid",
+    "name": "Chocolate Bars",
+    "description": "Various chocolate bar products",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+---
+
+#### PATCH `/api/v1/admin/categories/:id`
+
+Update a category.
+
+**Access:** Admin Only
+
+**Headers:**
+```
+Authorization: Bearer <admin-token>
+Content-Type: application/json
+```
+
+**Request Body (all fields optional):**
+```json
+{
+  "name": "Updated Category Name",
+  "description": "Updated description"
+}
+```
+
+**Response (200):**
+```json
+{
+  "category": {
+    "id": "uuid",
+    "name": "Updated Category Name",
+    "description": "Updated description",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  }
+}
+```
+
+---
+
+#### DELETE `/api/v1/admin/categories/:id`
+
+Delete a category.
+
+**Access:** Admin Only
+
+**Headers:**
+```
+Authorization: Bearer <admin-token>
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Category deleted successfully"
+}
+```
+
+**Note:** Deleting a category may affect products linked to it. Ensure products are reassigned or deleted before deleting a category.
+
+---
+
+### 6. Admin - Image Upload Routes
+
+#### POST `/api/v1/admin/upload/image`
+
+Upload an image file for products.
+
+**Access:** Admin Only
+
+**Headers:**
+```
+Authorization: Bearer <admin-token>
+```
+
+**Request Body:**
+- `multipart/form-data`
+- Field name: `image`
+- File type: Image files only (jpg, png, gif, webp, etc.)
+- Max file size: 5MB (recommended)
+
+**Response (200):**
+```json
+{
+  "url": "https://your-storage-bucket.com/images/abc123.jpg"
+}
+```
+
+**Error Response (400):**
+```json
+{
+  "error": "Invalid file type" or "File too large"
+}
+```
+
+**Note:** This endpoint uploads the image to cloud storage (e.g., Supabase Storage) and returns the public URL. Use this URL when creating or updating products.
+
+---
+
+### 7. Order Routes
 
 #### POST `/api/v1/orders`
 
@@ -385,7 +549,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 6. Admin - Order Routes
+### 8. Admin - Order Routes
 
 #### GET `/api/v1/admin/orders`
 
@@ -468,7 +632,7 @@ Authorization: Bearer <admin-token>
 
 ---
 
-### 7. Payment Routes
+### 9. Payment Routes
 
 #### POST `/api/v1/payments/intent`
 

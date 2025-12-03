@@ -72,7 +72,12 @@ export function AdminProductsClient() {
         setCategories(uniqueCategories);
       }
     } catch (error: any) {
-      toast.error('Failed to load products');
+      const errorMessage =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        'Failed to load products';
+      toast.error(errorMessage);
+      console.error('Failed to load products:', error);
     } finally {
       setLoading(false);
     }

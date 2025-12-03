@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { productsApi } from '@/lib/api-client';
+import { productsApi, categoriesApi } from '@/lib/api-client';
 import { useCartStore } from '@/store/cart-store';
 import type { Product, Category } from '@/types';
 import { ShoppingCart, Plus, Minus, Loader2 } from 'lucide-react';
@@ -24,18 +24,27 @@ export function MenuClient() {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const fetchedProducts = await productsApi.getAll();
+      // Load products and categories in parallel
+      const [fetchedProducts, fetchedCategories] = await Promise.all([
+        productsApi.getAll(),
+        categoriesApi.getAll().catch(() => []), // Fallback to empty array if endpoint doesn't exist
+      ]);
       setProducts(fetchedProducts);
 
-      // Extract unique categories
-      const uniqueCategories = Array.from(
-        new Map(
-          fetchedProducts
-            .filter((p) => p.category)
-            .map((p) => [p.category!.id, p.category!])
-        ).values()
-      );
-      setCategories(uniqueCategories);
+      // Use fetched categories if available, otherwise extract from products
+      if (fetchedCategories.length > 0) {
+        setCategories(fetchedCategories);
+      } else {
+        // Extract unique categories from products as fallback
+        const uniqueCategories = Array.from(
+          new Map(
+            fetchedProducts
+              .filter((p) => p.category)
+              .map((p) => [p.category!.id, p.category!])
+          ).values()
+        );
+        setCategories(uniqueCategories);
+      }
     } catch (error: any) {
       const errorMessage = error.response?.data?.error || 
                           error.response?.data?.message || 
