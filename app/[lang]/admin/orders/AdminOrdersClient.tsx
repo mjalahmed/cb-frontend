@@ -40,6 +40,7 @@ const statusOptions: OrderStatus[] = ['PENDING', 'PREPARING', 'READY', 'COMPLETE
 export function AdminOrdersClient() {
   const t = useTranslations('admin');
   const tOrders = useTranslations('orders');
+  const tCommon = useTranslations('common');
   const { user, isAuthenticated } = useAuthStore();
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -202,7 +203,7 @@ export function AdminOrdersClient() {
                       <div className="flex-1">
                         <p className="font-medium text-gray-900">{item.product.name}</p>
                         <p className="text-sm text-gray-500">
-                          {tOrders('quantity', { ns: 'common' })}: {item.quantity} × $
+                          {tCommon('quantity')}: {item.quantity} × $
                           {parseFloat(item.priceAtOrder).toFixed(2)}
                         </p>
                       </div>

@@ -13,6 +13,7 @@ import { PhoneVerificationModal } from './PhoneVerificationModal';
 
 export function Navbar() {
   const t = useTranslations('nav');
+  const tAdmin = useTranslations('admin');
   const pathname = usePathname();
   const router = useRouter();
   const locale = useLocale();
@@ -98,7 +99,7 @@ export function Navbar() {
                     : 'text-gray-700 hover:text-chocolate-700 hover:bg-gray-100'
                 }`}
               >
-                {t('admin', { ns: 'admin' })}
+                {tAdmin('admin')}
               </Link>
             )}
             <button
@@ -199,7 +200,7 @@ export function Navbar() {
                       : 'text-gray-700'
                   }`}
                 >
-                  {t('admin', { ns: 'admin' })}
+                  {tAdmin('admin')}
                 </Link>
               )}
               <button

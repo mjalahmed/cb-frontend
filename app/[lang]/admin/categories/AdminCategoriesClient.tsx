@@ -19,6 +19,7 @@ import toast from 'react-hot-toast';
 
 export function AdminCategoriesClient() {
   const t = useTranslations('admin');
+  const tCommon = useTranslations('common');
   const { user, isAuthenticated } = useAuthStore();
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -298,7 +299,7 @@ export function AdminCategoriesClient() {
                   }}
                   className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                 >
-                  {t('cancel', { ns: 'common' })}
+                  {tCommon('cancel')}
                 </button>
               </div>
             </form>
