@@ -176,8 +176,14 @@ export function OrdersClient() {
                             sizes="64px"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-2xl">
-                            🍫
+                          <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
+                            <Image
+                              src="/images/logo.png"
+                              alt={item.product.name}
+                              width={32}
+                              height={32}
+                              className="object-contain opacity-50"
+                            />
                           </div>
                         )}
                       </div>

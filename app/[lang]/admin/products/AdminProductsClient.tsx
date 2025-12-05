@@ -275,8 +275,14 @@ export function AdminProductsClient() {
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-6xl">
-                  🍫
+                <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                  <Image
+                    src="/images/logo.png"
+                    alt={product.name}
+                    width={80}
+                    height={80}
+                    className="object-contain opacity-50"
+                  />
                 </div>
               )}
               {!product.isAvailable && (

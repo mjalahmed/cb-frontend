@@ -159,6 +159,7 @@ export const adminProductsApi = {
     if (limit !== undefined) {
       body.limit = limit;
     }
+    // Use /list endpoint to avoid conflict with create endpoint validation
     const { data } = await api.post<{ 
       products: Product[];
       pagination?: {
@@ -167,7 +168,7 @@ export const adminProductsApi = {
         totalCount: number;
         totalPages: number;
       };
-    }>('/admin/products', body);
+    }>('/admin/products/list', body);
     return {
       products: data.products,
       pagination: data.pagination,

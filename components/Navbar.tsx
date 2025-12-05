@@ -10,6 +10,7 @@ import { useRouter } from '@/i18n/routing';
 import { LoginModal } from './LoginModal';
 import { RegisterModal } from './RegisterModal';
 import { PhoneVerificationModal } from './PhoneVerificationModal';
+import Image from 'next/image';
 
 export function Navbar() {
   const t = useTranslations('nav');
@@ -47,7 +48,13 @@ export function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/menu" className="flex items-center space-x-2 rtl:space-x-reverse">
-            <span className="text-2xl font-bold text-chocolate-700">🍫</span>
+            <Image
+              src="/images/logo.png"
+              alt="Chocobar Logo"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
             <span className="text-xl font-bold text-chocolate-800">Chocobar</span>
           </Link>
 
