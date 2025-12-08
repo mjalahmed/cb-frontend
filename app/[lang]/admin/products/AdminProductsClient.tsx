@@ -27,6 +27,7 @@ export function AdminProductsClient() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState({
@@ -52,41 +53,75 @@ export function AdminProductsClient() {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const [fetchedProductsData, fetchedCategoriesData] = await Promise.all([
-        adminProductsApi.getAll(), // Use admin endpoint to get ALL products including unavailable ones
-        adminCategoriesApi.getAll().catch(() => ({ categories: [] })), // Fallback to empty array if endpoint doesn't exist
-      ]);
       
-      // Admin endpoint returns all products (available and unavailable)
-      const productsList = fetchedProductsData.products;
-      setProducts(productsList);
-
-      // Use fetched categories, or extract from products as fallback
-      const fetchedCategories = Array.isArray(fetchedCategoriesData) 
-        ? fetchedCategoriesData 
-        : fetchedCategoriesData.categories || [];
-      if (fetchedCategories.length > 0) {
+      // Load categories first (needed for product creation form)
+      let fetchedCategories: Category[] = [];
+      try {
+        const categoriesData = await adminCategoriesApi.getAll();
+        fetchedCategories = categoriesData.categories || [];
         setCategories(fetchedCategories);
-      } else {
-        // Extract unique categories from products as fallback
-        const uniqueCategories = Array.from(
-          new Map(
-            productsList
-              .filter((p: Product) => p.category)
-              .map((p: Product) => [p.category!.id, p.category!])
-          ).values()
-        );
-        setCategories(uniqueCategories);
+        console.log('Loaded categories:', fetchedCategories.length);
+      } catch (categoryError: any) {
+        console.error('Failed to load categories:', categoryError);
+        toast.error('Failed to load categories. Please refresh the page.');
+        // Continue loading products even if categories fail
+      }
+      
+      // Load products
+      try {
+        const fetchedProductsData = await adminProductsApi.getAll();
+        const productsList = fetchedProductsData.products;
+        setProducts(productsList);
+        
+        // If no categories were loaded, try to extract from products as fallback
+        if (fetchedCategories.length === 0) {
+          const uniqueCategories = Array.from(
+            new Map(
+              productsList
+                .filter((p: Product) => p.category)
+                .map((p: Product) => [p.category!.id, p.category!])
+            ).values()
+          );
+          if (uniqueCategories.length > 0) {
+            setCategories(uniqueCategories);
+            console.log('Extracted categories from products:', uniqueCategories.length);
+          }
+        }
+      } catch (productError: any) {
+        const errorMessage =
+          productError.response?.data?.error ||
+          productError.response?.data?.message ||
+          'Failed to load products';
+        toast.error(errorMessage);
+        console.error('Failed to load products:', productError);
       }
     } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.error ||
-        error.response?.data?.message ||
-        'Failed to load products';
-      toast.error(errorMessage);
-      console.error('Failed to load products:', error);
+      console.error('Unexpected error:', error);
+      toast.error('An unexpected error occurred');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      setLoadingCategories(true);
+      const categoriesData = await adminCategoriesApi.getAll();
+      const fetchedCategories = categoriesData.categories || [];
+      setCategories(fetchedCategories);
+      console.log('Categories loaded:', fetchedCategories.length);
+      if (fetchedCategories.length === 0) {
+        console.warn('No categories found. Please create a category first.');
+      }
+    } catch (error: any) {
+      console.error('Failed to load categories:', error);
+      const errorMessage = error.response?.data?.error || 
+                          error.response?.data?.message || 
+                          'Failed to load categories';
+      console.error('Category loading error:', errorMessage);
+      // Don't show toast here to avoid spam when opening modal
+    } finally {
+      setLoadingCategories(false);
     }
   };
 
@@ -98,11 +133,35 @@ export function AdminProductsClient() {
     }
 
     try {
+      let imageUrl = formData.imageUrl;
+
+      // Upload image if a file is selected
+      if (imageFile) {
+        setUploadingImage(true);
+        try {
+          imageUrl = await adminUploadApi.uploadImage(imageFile, {
+            folder: 'products',
+          });
+          toast.success('Image uploaded successfully');
+        } catch (uploadError: any) {
+          const errorMessage =
+            uploadError.response?.data?.error ||
+            uploadError.response?.data?.message ||
+            uploadError.message ||
+            'Failed to upload image';
+          toast.error(errorMessage);
+          setUploadingImage(false);
+          return;
+        } finally {
+          setUploadingImage(false);
+        }
+      }
+
       await adminProductsApi.create({
         name: formData.name,
         description: formData.description || undefined,
         price: parseFloat(formData.price),
-        imageUrl: formData.imageUrl || undefined,
+        imageUrl: imageUrl || undefined,
         categoryId: formData.categoryId,
         isAvailable: formData.isAvailable,
       });
@@ -115,6 +174,7 @@ export function AdminProductsClient() {
         error.response?.data?.error ||
         error.response?.data?.message ||
         error.response?.data?.errors?.[0]?.msg ||
+        error.message ||
         'Failed to create product';
       toast.error(errorMessage);
     }
@@ -131,12 +191,15 @@ export function AdminProductsClient() {
       if (imageFile) {
         setUploadingImage(true);
         try {
-          imageUrl = await adminUploadApi.uploadImage(imageFile);
+          imageUrl = await adminUploadApi.uploadImage(imageFile, {
+            folder: 'products',
+          });
           toast.success('Image uploaded successfully');
         } catch (uploadError: any) {
           const errorMessage =
             uploadError.response?.data?.error ||
             uploadError.response?.data?.message ||
+            uploadError.message ||
             'Failed to upload image';
           toast.error(errorMessage);
           setUploadingImage(false);
@@ -194,7 +257,7 @@ export function AdminProductsClient() {
     setImagePreview(null);
   };
 
-  const openEditModal = (product: Product) => {
+  const openEditModal = async (product: Product) => {
     setEditingProduct(product);
     setFormData({
       name: product.name,
@@ -206,6 +269,8 @@ export function AdminProductsClient() {
     });
     setImageFile(null);
     setImagePreview(product.imageUrl || null);
+    // Always reload categories to get latest list
+    await loadCategories();
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -244,8 +309,10 @@ export function AdminProductsClient() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-chocolate-800">{t('products')}</h1>
         <button
-          onClick={() => {
+          onClick={async () => {
             resetForm();
+            // Always reload categories before opening modal to get latest list
+            await loadCategories();
             setShowAddModal(true);
           }}
           className="flex items-center space-x-2 rtl:space-x-reverse bg-chocolate-600 text-white px-4 py-2 rounded-lg hover:bg-chocolate-700 transition-colors"
@@ -464,19 +531,27 @@ export function AdminProductsClient() {
                   onChange={(e) =>
                     setFormData({ ...formData, categoryId: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-chocolate-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-chocolate-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                   required
+                  disabled={loadingCategories}
                 >
-                  <option value="">{t('selectCategory')}</option>
+                  <option value="">
+                    {loadingCategories ? t('loading', { ns: 'common' }) : t('selectCategory')}
+                  </option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
                     </option>
                   ))}
                 </select>
-                {categories.length === 0 && (
-                  <p className="text-xs text-gray-500 mt-1">
+                {!loadingCategories && categories.length === 0 && (
+                  <p className="text-xs text-red-500 mt-1">
                     {t('noCategories')} - {t('createCategoryFirst')}
+                  </p>
+                )}
+                {loadingCategories && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    {t('loading', { ns: 'common' })}...
                   </p>
                 )}
               </div>
@@ -499,7 +574,7 @@ export function AdminProductsClient() {
               <div className="flex space-x-3 rtl:space-x-reverse pt-4">
                 <button
                   type="submit"
-                  disabled={uploadingImage}
+                  disabled={uploadingImage || loadingCategories}
                   className="flex-1 flex items-center justify-center space-x-2 rtl:space-x-reverse bg-chocolate-600 text-white py-2 px-4 rounded-lg hover:bg-chocolate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {uploadingImage ? (

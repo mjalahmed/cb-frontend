@@ -1,7 +1,8 @@
 import axios, { AxiosError } from 'axios';
 import type { ApiError } from '@/types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api/v1';
+// Use relative path since backend is now in Next.js API routes
+const API_BASE_URL = '/api/v1';
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

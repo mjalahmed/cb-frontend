@@ -151,21 +151,31 @@ export const paymentsApi = {
 
 // Admin - Products
 export const adminProductsApi = {
-  getAll: async (page?: number, limit?: number) => {
-    const body: { page?: number; limit?: number } = {};
+  getAll: async (page?: number, limit?: number, categoryId?: string, isAvailable?: boolean) => {
+    const body: { 
+      page?: string; 
+      limit?: string; 
+      categoryId?: string; 
+      isAvailable?: boolean;
+    } = {};
     if (page !== undefined) {
-      body.page = page;
+      body.page = String(page);
     }
     if (limit !== undefined) {
-      body.limit = limit;
+      body.limit = String(limit);
     }
-    // Use /list endpoint to avoid conflict with create endpoint validation
+    if (categoryId) {
+      body.categoryId = categoryId;
+    }
+    if (isAvailable !== undefined) {
+      body.isAvailable = isAvailable;
+    }
     const { data } = await api.post<{ 
       products: Product[];
       pagination?: {
         page: number;
         limit: number;
-        totalCount: number;
+        total: number;
         totalPages: number;
       };
     }>('/admin/products/list', body);
@@ -173,6 +183,12 @@ export const adminProductsApi = {
       products: data.products,
       pagination: data.pagination,
     };
+  },
+  get: async (productId: string) => {
+    const { data } = await api.post<{ product: Product }>('/admin/products/get', {
+      id: productId,
+    });
+    return data.product;
   },
   create: async (productData: {
     name: string;
@@ -182,7 +198,7 @@ export const adminProductsApi = {
     categoryId: string;
     isAvailable?: boolean;
   }) => {
-    const { data } = await api.post<{ product: Product }>('/admin/products/create', productData);
+    const { data } = await api.post<{ product: Product }>('/admin/products', productData);
     return data.product;
   },
   update: async (productId: string, productData: {
@@ -198,6 +214,12 @@ export const adminProductsApi = {
       ...productData,
     });
     return data.product;
+  },
+  delete: async (productId: string) => {
+    const { data } = await api.post<{ message: string }>('/admin/products/delete', {
+      id: productId,
+    });
+    return data;
   },
 };
 
@@ -243,6 +265,7 @@ export const adminOrdersApi = {
 // Admin - Categories
 export const adminCategoriesApi = {
   getAll: async (page?: number, limit?: number) => {
+    // Always send a body, even if empty (API requires POST with body)
     const body: { page?: number; limit?: number } = {};
     if (page !== undefined) {
       body.page = page;
@@ -258,9 +281,9 @@ export const adminCategoriesApi = {
         totalCount: number;
         totalPages: number;
       };
-    }>('/admin/categories', body);
+    }>('/admin/categories', Object.keys(body).length > 0 ? body : {});
     return {
-      categories: data.categories,
+      categories: data.categories || [],
       pagination: data.pagination,
     };
   },
@@ -297,12 +320,45 @@ export const adminCategoriesApi = {
 
 // Admin - Image Upload
 export const adminUploadApi = {
-  uploadImage: async (file: File) => {
+  uploadImage: async (file: File, options?: { fileName?: string; folder?: string }) => {
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error('File size must be less than 5MB');
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      throw new Error('Only image files are allowed');
+    }
+
     const formData = new FormData();
+    // Field name must be exactly 'image' as per API requirements
     formData.append('image', file);
     
+    // Optional parameters
+    if (options?.fileName) {
+      formData.append('fileName', options.fileName);
+    }
+    
+    if (options?.folder) {
+      formData.append('folder', options.folder);
+    } else {
+      // Default folder is 'products'
+      formData.append('folder', 'products');
+    }
+    
     // Content-Type header will be automatically removed by the interceptor for FormData
-    const { data } = await api.post<{ url: string }>('/admin/upload/image', formData);
+    // This allows the browser to set it with the correct boundary
+    const { data } = await api.post<{ 
+      success: boolean;
+      url: string;
+      message?: string;
+    }>('/admin/upload/image', formData);
+    
+    if (!data.success || !data.url) {
+      throw new Error(data.message || 'Upload failed');
+    }
+    
     return data.url;
   },
 };
