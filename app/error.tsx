@@ -1,9 +1,10 @@
 'use client';
 
-// Prevent static generation for error page
+// Root-level error page must be a Client Component
+// Prevent static generation
 export const dynamic = 'force-dynamic';
 
-export default function Error({
+export default function RootError({
   error,
   reset,
 }: {
