@@ -1,5 +1,6 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
+import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { Inter, Cairo } from 'next/font/google';
@@ -36,6 +37,10 @@ export default async function LocaleLayout({
   if (!routing.locales.includes(lang as any)) {
     notFound();
   }
+
+  // Set the locale explicitly to enable static rendering
+  // This prevents dynamic rendering caused by reading headers
+  setRequestLocale(lang);
 
   let messages;
   try {
