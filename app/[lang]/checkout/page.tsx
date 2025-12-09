@@ -1,6 +1,11 @@
-import { Navbar } from '@/components/Navbar';
+import dynamic from 'next/dynamic';
 import { CheckoutClient } from './CheckoutClient';
 import { setRequestLocale } from 'next-intl/server';
+
+// Dynamically import Navbar to prevent SSR issues with next-intl hooks
+const Navbar = dynamic(() => import('@/components/Navbar').then(mod => ({ default: mod.Navbar })), {
+  ssr: true,
+});
 
 export default async function CheckoutPage({
   params,

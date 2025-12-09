@@ -5,9 +5,18 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { Inter, Cairo } from 'next/font/google';
 import '../globals.css';
-import { Toaster } from 'react-hot-toast';
+import dynamic from 'next/dynamic';
 import { Providers } from './providers';
-import { AuthInitializer } from './AuthInitializer';
+
+// Dynamically import client components to prevent SSR issues
+const DynamicAuthInitializer = dynamic(() => import('./AuthInitializer').then(mod => ({ default: mod.AuthInitializer })), {
+  ssr: false,
+});
+
+// Dynamically import Toaster to prevent SSR issues
+const Toaster = dynamic(() => import('react-hot-toast').then(mod => ({ default: mod.Toaster })), {
+  ssr: false,
+});
 
 const inter = Inter({
   subsets: ['latin'],
@@ -59,7 +68,7 @@ export default async function LocaleLayout({
       >
         <NextIntlClientProvider messages={messages}>
           <Providers>
-            <AuthInitializer />
+            <DynamicAuthInitializer />
             {children}
             <Toaster
               position={lang === 'ar' ? 'top-left' : 'top-right'}
