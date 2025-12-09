@@ -1,4 +1,5 @@
 const createNextIntlPlugin = require('next-intl/plugin');
+const path = require('path');
 
 const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
@@ -18,6 +19,15 @@ const nextConfig = {
         hostname: '**',
       },
     ],
+  },
+  
+  // Explicitly configure webpack to resolve @/* aliases
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': path.resolve(__dirname),
+    };
+    return config;
   },
 };
 

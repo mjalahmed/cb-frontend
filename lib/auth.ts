@@ -77,24 +77,24 @@ export function requireAuth(handler: (req: NextRequest, user: AuthUser) => Promi
 export function requireAdmin(handler: (req: NextRequest, user: AuthUser) => Promise<NextResponse>) {
   return async (req: NextRequest) => {
     try {
-      const user = await authenticate(req);
-      
-      if (!user) {
-        return NextResponse.json(
-          { error: 'Authentication required' },
-          { status: 401 }
-        );
-      }
+    const user = await authenticate(req);
+    
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
 
-      if (user.role !== 'ADMIN') {
-        return NextResponse.json(
-          { error: 'Admin access required' },
-          { status: 403 }
-        );
-      }
+    if (user.role !== 'ADMIN') {
+      return NextResponse.json(
+        { error: 'Admin access required' },
+        { status: 403 }
+      );
+    }
 
-      req.user = user;
-      return handler(req, user);
+    req.user = user;
+    return handler(req, user);
     } catch (error) {
       // Catch any unexpected errors during authentication
       console.error('Error in requireAdmin:', error);

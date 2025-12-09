@@ -76,7 +76,7 @@ export function verifyToken(token: string): JwtPayload | null {
       return null;
     } else {
       console.error('JWT verification error:', error);
-      return null;
+    return null;
     }
   }
 }
