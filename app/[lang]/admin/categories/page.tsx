@@ -1,6 +1,9 @@
 import { AdminCategoriesClient } from './AdminCategoriesClient';
 import { setRequestLocale } from 'next-intl/server';
 
+// Prevent static generation for admin pages that use client components with hooks
+export const dynamic = 'force-dynamic';
+
 export default async function AdminCategoriesPage({
   params,
 }: {

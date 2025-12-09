@@ -1,6 +1,9 @@
 import { redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 
+// Prevent static generation for root page
+export const dynamic = 'force-dynamic';
+
 export default async function RootPage({
   params,
 }: {

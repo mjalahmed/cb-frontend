@@ -5,16 +5,16 @@ import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import { Inter, Cairo } from 'next/font/google';
 import '../globals.css';
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 import { Providers } from './providers';
 
 // Dynamically import client components to prevent SSR issues
-const DynamicAuthInitializer = dynamic(() => import('./AuthInitializer').then(mod => ({ default: mod.AuthInitializer })), {
+const DynamicAuthInitializer = dynamicImport(() => import('./AuthInitializer').then(mod => ({ default: mod.AuthInitializer })), {
   ssr: false,
 });
 
 // Dynamically import Toaster to prevent SSR issues
-const Toaster = dynamic(() => import('react-hot-toast').then(mod => ({ default: mod.Toaster })), {
+const Toaster = dynamicImport(() => import('react-hot-toast').then(mod => ({ default: mod.Toaster })), {
   ssr: false,
 });
 

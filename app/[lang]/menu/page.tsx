@@ -1,10 +1,14 @@
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 import { MenuClient } from './MenuClient';
 import { setRequestLocale } from 'next-intl/server';
 
+// Prevent static generation for pages that use client components with hooks
+export const dynamic = 'force-dynamic';
+
 // Dynamically import Navbar to prevent SSR issues with next-intl hooks
-const Navbar = dynamic(() => import('@/components/Navbar').then(mod => ({ default: mod.Navbar })), {
-  ssr: true, // Navbar can be SSR'd, but dynamic import helps with context
+// Must use ssr: false because Navbar uses client-side hooks that require React context
+const Navbar = dynamicImport(() => import('@/components/Navbar').then(mod => ({ default: mod.Navbar })), {
+  ssr: false,
 });
 
 export default async function MenuPage({
