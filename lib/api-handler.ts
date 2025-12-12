@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import logger from '@/lib/utils/logger.util';
 
 export type ApiHandler = (
   req: NextRequest,
@@ -7,10 +8,50 @@ export type ApiHandler = (
 
 export function createApiHandler(handler: ApiHandler): ApiHandler {
   return async (req: NextRequest, context) => {
+    const startTime = Date.now();
+    const url = new URL(req.url);
+    const path = url.pathname;
+    const method = req.method;
+    
+    // Extract IP and user agent
+    const ip = req.headers.get('x-forwarded-for') || 
+               req.headers.get('x-real-ip') || 
+               'unknown';
+    const userAgent = req.headers.get('user-agent') || 'unknown';
+    
+    // Log incoming request
+    logger.api(method, path, {
+      ip,
+      userAgent,
+      query: Object.fromEntries(url.searchParams),
+    });
+    
     try {
-      return await handler(req, context);
+      const response = await handler(req, context);
+      const duration = Date.now() - startTime;
+      
+      // Log successful response
+      logger.api(method, path, {
+        status: response.status,
+        duration,
+        ip,
+        userAgent,
+      });
+      
+      return response;
     } catch (error) {
-      console.error('API Error', {
+      const duration = Date.now() - startTime;
+      
+      // Log error
+      logger.api(method, path, {
+        status: 500,
+        duration,
+        ip,
+        userAgent,
+        error: error as Error,
+      });
+      
+      logger.error('API Error', {
         url: req.url,
         method: req.method,
         error: error instanceof Error ? error.message : 'Unknown error',
