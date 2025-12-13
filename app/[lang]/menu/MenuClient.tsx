@@ -153,22 +153,22 @@ export function MenuClient() {
         {/* Products Grid */}
         <SlideUp delay={200}>
           {filteredProducts.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">No products found</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => {
-            const cartQuantity = getCartQuantity(product.id);
-            const isInCart = cartQuantity > 0;
+            <div className="text-center py-12">
+              <p className="text-gray-500 text-lg">No products found</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredProducts.map((product) => {
+                const cartQuantity = getCartQuantity(product.id);
+                const isInCart = cartQuantity > 0;
 
-            return (
-              <div
-                key={product.id}
-                className={`bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105 ${
-                  !product.isAvailable ? 'opacity-60' : ''
-                }`}
-              >
+                return (
+                  <div
+                    key={product.id}
+                    className={`bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105 ${
+                      !product.isAvailable ? 'opacity-60' : ''
+                    }`}
+                  >
                 {/* Product Image */}
                 <div className="relative h-48 w-full bg-gray-200">
                   {product.imageUrl ? (
@@ -241,18 +241,18 @@ export function MenuClient() {
                         <ShoppingCart className="w-4 h-4" />
                         <span className="text-sm">{t('addToCart')}</span>
                       </button>
-                    )          }
-        </div>
+                    )}
+                  </div>
+                </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </SlideUp>
-      </div>
-    </PageTransition>
-  );
-})}
-        </div>
-      )}
 
-      {/* Pagination */}
-      {pagination && pagination.totalPages > 1 && (
+        {/* Pagination */}
+        {pagination && pagination.totalPages > 1 && (
         <div className="mt-8 flex justify-center items-center space-x-2 rtl:space-x-reverse">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -273,7 +273,8 @@ export function MenuClient() {
           </button>
         </div>
       )}
-    </div>
+      </div>
+    </PageTransition>
   );
 }
 

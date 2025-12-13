@@ -259,7 +259,9 @@ export function OrdersClient() {
           </button>
         </div>
       )}
-    </div>
+        </SlideUp>
+      </div>
+    </PageTransition>
   );
 }
 

@@ -18,6 +18,7 @@ import {
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
 import Image from 'next/image';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 const statusIcons = {
   PENDING: Clock,
