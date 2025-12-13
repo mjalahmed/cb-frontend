@@ -202,7 +202,7 @@ export function MenuClient() {
                   )}
                   <div className="flex items-center justify-between mt-3">
                     <span className="text-xl font-bold text-chocolate-600">
-                      ${parseFloat(product.price).toFixed(2)}
+                      {parseFloat(product.price).toFixed(3)} BHD
                     </span>
                     {isInCart ? (
                       <div className="flex items-center space-x-2 rtl:space-x-reverse bg-chocolate-50 rounded-lg px-2 py-1">

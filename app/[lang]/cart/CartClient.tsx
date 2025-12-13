@@ -76,7 +76,7 @@ export function CartClient() {
                     {item.product.name}
                   </h3>
                   <p className="text-chocolate-600 font-semibold">
-                    ${parseFloat(item.product.price).toFixed(2)}
+                    {parseFloat(item.product.price).toFixed(3)} BHD
                   </p>
                 </div>
 
@@ -102,7 +102,7 @@ export function CartClient() {
 
                   <div className="text-right sm:text-left">
                     <p className="text-lg font-bold text-gray-900">
-                      ${(parseFloat(item.product.price) * item.quantity).toFixed(2)}
+                      {(parseFloat(item.product.price) * item.quantity).toFixed(3)} BHD
                     </p>
                   </div>
 
@@ -126,12 +126,12 @@ export function CartClient() {
             <div className="space-y-3 mb-6">
               <div className="flex justify-between text-gray-600">
                 <span>{tCommon('subtotal')}</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{total.toFixed(3)} BHD</span>
               </div>
               <div className="border-t border-gray-200 pt-3">
                 <div className="flex justify-between text-lg font-bold text-gray-900">
                   <span>{tCommon('total')}</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>{total.toFixed(3)} BHD</span>
                 </div>
               </div>
             </div>

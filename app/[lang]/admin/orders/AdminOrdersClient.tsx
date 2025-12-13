@@ -241,12 +241,11 @@ export function AdminOrdersClient() {
                       <div className="flex-1">
                         <p className="font-medium text-gray-900">{item.product.name}</p>
                         <p className="text-sm text-gray-500">
-                          {tCommon('quantity')}: {item.quantity} × $
-                          {parseFloat(item.priceAtOrder).toFixed(2)}
+                          {tCommon('quantity')}: {item.quantity} × {parseFloat(item.priceAtOrder).toFixed(3)} BHD
                         </p>
                       </div>
                       <p className="font-semibold text-gray-900">
-                        ${(parseFloat(item.priceAtOrder) * item.quantity).toFixed(2)}
+                        {(parseFloat(item.priceAtOrder) * item.quantity).toFixed(3)} BHD
                       </p>
                     </div>
                   ))}
@@ -275,7 +274,7 @@ export function AdminOrdersClient() {
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
                     <div className="text-right sm:text-left">
                       <p className="text-lg font-bold text-chocolate-600">
-                        {tOrders('total')}: ${parseFloat(order.totalAmount).toFixed(2)}
+                        {tOrders('total')}: {parseFloat(order.totalAmount).toFixed(3)} BHD
                       </p>
                     </div>
                     {/* Status Update Dropdown */}

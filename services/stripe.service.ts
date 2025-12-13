@@ -23,8 +23,8 @@ export async function createPaymentIntent(
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert to cents
-      currency: 'usd',
+      amount: Math.round(amount * 1000), // Convert to fils (BHD uses 3 decimal places, 1000 fils = 1 BHD)
+      currency: 'bhd',
       metadata: {
         orderId,
         ...metadata,

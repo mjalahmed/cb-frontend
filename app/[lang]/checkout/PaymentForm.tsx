@@ -77,7 +77,7 @@ export function PaymentForm({ orderId, amount, onSuccess, onCancel }: PaymentFor
       <div className="bg-white rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Payment</h2>
         <p className="text-gray-600 mb-6">
-          Total amount: <span className="font-bold">${amount.toFixed(2)}</span>
+          Total amount: <span className="font-bold">{amount.toFixed(3)} BHD</span>
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -93,7 +93,7 @@ export function PaymentForm({ orderId, amount, onSuccess, onCancel }: PaymentFor
                 <span>{t('processing')}</span>
               </>
             ) : (
-              <span>Pay ${amount.toFixed(2)}</span>
+              <span>Pay {amount.toFixed(3)} BHD</span>
             )}
           </button>
         </form>

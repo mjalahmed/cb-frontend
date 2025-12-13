@@ -375,7 +375,7 @@ export function AdminProductsClient() {
               </p>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xl font-bold text-chocolate-600">
-                  ${parseFloat(product.price).toFixed(2)}
+                  {parseFloat(product.price).toFixed(3)} BHD
                 </span>
                 <button
                   onClick={() => handleToggleAvailability(product)}

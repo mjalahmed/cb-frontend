@@ -266,7 +266,7 @@ export function CheckoutClient() {
                     {item.product.name} x{item.quantity}
                   </span>
                   <span className="text-gray-900">
-                    ${(parseFloat(item.product.price) * item.quantity).toFixed(2)}
+                    {(parseFloat(item.product.price) * item.quantity).toFixed(3)} BHD
                   </span>
                 </div>
               ))}
@@ -274,7 +274,7 @@ export function CheckoutClient() {
             <div className="border-t border-gray-200 pt-4">
               <div className="flex justify-between text-lg font-bold text-gray-900">
                 <span>{tCommon('total')}</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{total.toFixed(3)} BHD</span>
               </div>
             </div>
             <button
