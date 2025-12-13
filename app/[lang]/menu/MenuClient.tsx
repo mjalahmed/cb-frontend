@@ -5,9 +5,11 @@ import { useTranslations } from 'next-intl';
 import { productsApi, categoriesApi } from '@/lib/api-client';
 import { useCartStore } from '@/store/cart-store';
 import type { Product, Category } from '@/types';
-import { ShoppingCart, Plus, Minus, Loader2 } from 'lucide-react';
+import { ShoppingCart, Plus, Minus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
+import { LoadingSpinner, PageLoader } from '@/components/LoadingSpinner';
+import { PageTransition, FadeIn, SlideUp } from '@/components/PageTransition';
 
 export function MenuClient() {
   const t = useTranslations('menu');
@@ -103,19 +105,23 @@ export function MenuClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-chocolate-600" />
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-chocolate-800 mb-8">{t('title')}</h1>
+    <PageTransition>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <SlideUp>
+          <h1 className="text-3xl font-bold text-chocolate-800 mb-8">{t('title')}</h1>
+        </SlideUp>
 
-      {/* Categories Filter */}
-      {categories.length > 0 && (
-        <div className="mb-8 overflow-x-auto">
-          <div className="flex space-x-2 rtl:space-x-reverse pb-2">
+        {/* Categories Filter */}
+        <FadeIn delay={100}>
+          {categories.length > 0 && (
+            <div className="mb-8 overflow-x-auto">
+              <div className="flex space-x-2 rtl:space-x-reverse pb-2">
             <button
               onClick={() => setSelectedCategory(null)}
               className={`px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
@@ -138,13 +144,15 @@ export function MenuClient() {
               >
                 {category.name}
               </button>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+        </FadeIn>
 
-      {/* Products Grid */}
-      {filteredProducts.length === 0 ? (
+        {/* Products Grid */}
+        <SlideUp delay={200}>
+          {filteredProducts.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">No products found</p>
         </div>
@@ -233,12 +241,13 @@ export function MenuClient() {
                         <ShoppingCart className="w-4 h-4" />
                         <span className="text-sm">{t('addToCart')}</span>
                       </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+                    )          }
+        </div>
+        </SlideUp>
+      </div>
+    </PageTransition>
+  );
+})}
         </div>
       )}
 

@@ -8,7 +8,9 @@ import {
   useElements,
 } from '@stripe/react-stripe-js';
 import { paymentsApi } from '@/lib/api-client';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import { InlineLoader } from '@/components/LoadingSpinner';
+import { PageTransition, FadeIn } from '@/components/PageTransition';
 import toast from 'react-hot-toast';
 
 interface PaymentFormProps {
@@ -89,7 +91,7 @@ export function PaymentForm({ orderId, amount, onSuccess, onCancel }: PaymentFor
           >
             {processing ? (
               <>
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <InlineLoader />
                 <span>{t('processing')}</span>
               </>
             ) : (

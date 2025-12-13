@@ -169,9 +169,23 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu Backdrop */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
+          <div
+            className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{ top: '64px' }}
+          />
+        )}
+
+        {/* Mobile Menu with Slide Animation */}
+        <div
+          className={`md:hidden fixed inset-y-0 left-0 rtl:left-auto rtl:right-0 w-64 bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+            mobileMenuOpen ? 'translate-x-0' : '-translate-x-full rtl:translate-x-full'
+          }`}
+          style={{ top: '64px' }}
+        >
+          <div className="h-full overflow-y-auto py-4 px-4">
             <div className="flex flex-col space-y-2">
               <Link
                 href="/menu"
@@ -252,7 +266,7 @@ export function Navbar() {
               )}
             </div>
           </div>
-        )}
+        </div>
       </div>
 
       <LoginModal

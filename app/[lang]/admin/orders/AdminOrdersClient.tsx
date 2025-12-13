@@ -7,7 +7,7 @@ import { useAuthStore } from '@/store/auth-store';
 import { useRouter } from '@/i18n/routing';
 import type { Order, OrderStatus } from '@/types';
 import {
-  Loader2,
+  // Loader2 removed - using LoadingSpinner instead
   Package,
   Clock,
   CheckCircle,
@@ -115,7 +115,7 @@ export function AdminOrdersClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-chocolate-600" />
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

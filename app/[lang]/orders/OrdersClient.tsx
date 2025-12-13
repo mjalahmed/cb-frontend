@@ -6,10 +6,12 @@ import { ordersApi } from '@/lib/api-client';
 import { useAuthStore } from '@/store/auth-store';
 import { useRouter } from '@/i18n/routing';
 import type { Order } from '@/types';
-import { Loader2, Package, Clock, CheckCircle, XCircle, Truck } from 'lucide-react';
+import { Package, Clock, CheckCircle, XCircle, Truck } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
 import { format } from 'date-fns';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { PageTransition, SlideUp, FadeIn } from '@/components/PageTransition';
 
 const statusIcons = {
   PENDING: Clock,
@@ -96,15 +98,17 @@ export function OrdersClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-chocolate-600" />
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
-        <h1 className="text-3xl font-bold text-chocolate-800 mb-4 sm:mb-0">{t('title')}</h1>
+    <PageTransition>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <SlideUp>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+            <h1 className="text-3xl font-bold text-chocolate-800 mb-4 sm:mb-0">{t('title')}</h1>
         
         {/* Sort By */}
         <div className="flex items-center space-x-2 rtl:space-x-reverse">

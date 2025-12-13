@@ -7,7 +7,7 @@ import { useAuthStore } from '@/store/auth-store';
 import { useRouter } from '@/i18n/routing';
 import type { Product, Category } from '@/types';
 import {
-  Loader2,
+  // Loader2 removed - using LoadingSpinner instead
   Plus,
   Edit2,
   Trash2,
@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
+import { LoadingSpinner, InlineLoader } from '@/components/LoadingSpinner';
+import { PageTransition, SlideUp } from '@/components/PageTransition';
 
 export function AdminProductsClient() {
   const t = useTranslations('admin');
@@ -299,7 +301,7 @@ export function AdminProductsClient() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-chocolate-600" />
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
@@ -580,7 +582,7 @@ export function AdminProductsClient() {
                 >
                   {uploadingImage ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <InlineLoader />
                       <span>{t('uploading')}</span>
                     </>
                   ) : (

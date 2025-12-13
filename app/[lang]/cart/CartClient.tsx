@@ -6,6 +6,7 @@ import { Link } from '@/i18n/routing';
 import { Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from '@/i18n/routing';
+import { PageTransition, SlideUp, FadeIn } from '@/components/PageTransition';
 
 export function CartClient() {
   const t = useTranslations('cart');
@@ -22,8 +23,10 @@ export function CartClient() {
 
   if (items.length === 0) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center">
+      <PageTransition>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <FadeIn>
+            <div className="text-center">
           <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('empty')}</h2>
           <p className="text-gray-600 mb-6">{t('emptyDescription')}</p>
@@ -33,15 +36,20 @@ export function CartClient() {
           >
             <span>{t('continueShopping')}</span>
             <ArrowRight className="w-5 h-5" />
-          </Link>
-        </div>
+            </Link>
+          </div>
+        </FadeIn>
       </div>
+    </PageTransition>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold text-chocolate-800 mb-8">{t('title')}</h1>
+    <PageTransition>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <SlideUp>
+          <h1 className="text-3xl font-bold text-chocolate-800 mb-8">{t('title')}</h1>
+        </SlideUp>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Cart Items */}

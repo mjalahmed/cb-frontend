@@ -9,7 +9,9 @@ import { LoginModal } from '@/components/LoginModal';
 import { useRouter } from '@/i18n/routing';
 import { PaymentForm } from './PaymentForm';
 import type { OrderType, PaymentMethod } from '@/types';
-import { Calendar, Clock, CreditCard, Banknote, Loader2 } from 'lucide-react';
+import { Calendar, Clock, CreditCard, Banknote } from 'lucide-react';
+import { InlineLoader } from '@/components/LoadingSpinner';
+import { PageTransition, SlideUp } from '@/components/PageTransition';
 import toast from 'react-hot-toast';
 import { format, addDays, setHours, setMinutes } from 'date-fns';
 
@@ -284,7 +286,7 @@ export function CheckoutClient() {
             >
               {processing ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <InlineLoader />
                   <span>{t('processing')}</span>
                 </>
               ) : (
