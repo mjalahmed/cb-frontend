@@ -36,14 +36,7 @@ const consoleFormat = winston.format.combine(
   })
 );
 
-// Format for file output (no colors)
-const fileFormat = winston.format.combine(
-  winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-  winston.format.errors({ stack: true }),
-  winston.format.json()
-);
-
-// Create transports
+// Create transports - console only (no file logging to save costs)
 const transports: winston.transport[] = [
   // Console transport with colors
   new winston.transports.Console({
@@ -51,21 +44,6 @@ const transports: winston.transport[] = [
     level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
   }),
 ];
-
-// Add file transport in production
-if (process.env.NODE_ENV === 'production') {
-  transports.push(
-    new winston.transports.File({
-      filename: 'logs/error.log',
-      level: 'error',
-      format: fileFormat,
-    }),
-    new winston.transports.File({
-      filename: 'logs/combined.log',
-      format: fileFormat,
-    })
-  );
-}
 
 // Create the logger instance
 const logger = winston.createLogger({

@@ -170,6 +170,7 @@ export function MenuClient() {
                       fill
                       className="object-cover"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      unoptimized={true}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gray-100">

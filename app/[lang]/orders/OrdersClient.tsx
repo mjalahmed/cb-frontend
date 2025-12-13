@@ -174,6 +174,7 @@ export function OrdersClient() {
                             fill
                             className="object-cover rounded-lg"
                             sizes="64px"
+                            unoptimized={true}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">

@@ -60,6 +60,7 @@ export function CartClient() {
                     fill
                     className="object-cover rounded-lg"
                     sizes="(max-width: 640px) 100vw, 96px"
+                    unoptimized={true}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-4xl">
